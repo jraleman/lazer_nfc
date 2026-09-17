@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="768" height="512" viewBox="0 0 768 512">
+  <rect width="768" height="512" fill="#264b57"/>
+  <rect x="17" y="17" width="734" height="478" rx="35" fill="#30545e" stroke="#4a7478" stroke-width="6"/>
+  <rect x="34" y="34" width="700" height="444" rx="27" fill="#244a56"/>
+  <g fill="none" stroke="#487074" stroke-width="1" opacity=".45">
+    <path d="M64 34v444M104 34v444M144 34v444M184 34v444M224 34v444M264 34v444M304 34v444M344 34v444M384 34v444M424 34v444M464 34v444M504 34v444M544 34v444M584 34v444M624 34v444M664 34v444M704 34v444"/>
+    <path d="M34 56h700M34 96h700M34 136h700M34 176h700M34 216h700M34 256h700M34 296h700M34 336h700M34 376h700M34 416h700M34 456h700"/>
+  </g>
+  <g fill="#aa9270" stroke="#1d3c48" stroke-width="4">
+    <circle cx="49" cy="48" r="12"/><circle cx="719" cy="48" r="12"/>
+    <circle cx="49" cy="464" r="12"/><circle cx="719" cy="464" r="12"/>
+  </g>
+  <g stroke="#486774" stroke-width="3">
+    <path d="M44 48h10M714 48h10M44 464h10M714 464h10"/>
+  </g>
+  <path d="M324 477h120" stroke="#89b6a5" stroke-width="5" stroke-linecap="round"/>
+</svg>

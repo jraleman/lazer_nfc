@@ -1,0 +1,2 @@
+-keep class com.deskcansaw.lazernfc.LazerNfc { *; }
+-keepattributes RuntimeVisibleAnnotations

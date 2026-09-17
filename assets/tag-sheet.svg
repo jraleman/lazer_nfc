@@ -1,0 +1,218 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="210mm" height="297mm" viewBox="0 0 840 1188">
+<rect width="840" height="1188" fill="#ffffff"/>
+<g font-family="sans-serif" text-anchor="middle" fill="#102632">
+<text x="420" y="38" font-size="25" font-weight="bold">LaZer NFC - the little laboratory</text>
+<text x="420" y="63" font-size="14">Base labels first. Dark / Base / Light use one / two / three dots.</text>
+<text x="420" y="87" font-size="14">Keep tags at least 15 cm apart. Place them comfortably within reach.</text>
+<g transform="translate(24 110)">
+<rect width="248" height="128" rx="10" fill="#8f2b34" stroke="#102632" stroke-width="2" stroke-dasharray="4 3"/>
+<circle cx="52" cy="61" r="35" fill="white"/>
+<polygon transform="translate(52 61)" fill="#102632" points="-0.00,-25.00 21.65,12.50 -21.65,12.50"/>
+<rect x="99" y="21" width="136" height="84" rx="8" fill="white"/>
+<text x="167" y="48" font-size="17" font-weight="bold">Dark red</text>
+<text x="167" y="69" font-size="12">DARK</text>
+<circle cx="167" cy="88" r="4" fill="#102632"/>
+</g>
+<g transform="translate(296 110)">
+<rect width="248" height="128" rx="10" fill="#ef4856" stroke="#102632" stroke-width="2" stroke-dasharray="4 3"/>
+<circle cx="52" cy="61" r="35" fill="white"/>
+<polygon transform="translate(52 61)" fill="#102632" points="-0.00,-25.00 21.65,12.50 -21.65,12.50"/>
+<rect x="99" y="21" width="136" height="84" rx="8" fill="white"/>
+<text x="167" y="48" font-size="17" font-weight="bold">Red</text>
+<text x="167" y="69" font-size="12">BASE</text>
+<circle cx="159" cy="88" r="4" fill="#102632"/>
+<circle cx="175" cy="88" r="4" fill="#102632"/>
+</g>
+<g transform="translate(568 110)">
+<rect width="248" height="128" rx="10" fill="#f69aa2" stroke="#102632" stroke-width="2" stroke-dasharray="4 3"/>
+<circle cx="52" cy="61" r="35" fill="white"/>
+<polygon transform="translate(52 61)" fill="#102632" points="-0.00,-25.00 21.65,12.50 -21.65,12.50"/>
+<rect x="99" y="21" width="136" height="84" rx="8" fill="white"/>
+<text x="167" y="48" font-size="17" font-weight="bold">Light red</text>
+<text x="167" y="69" font-size="12">LIGHT</text>
+<circle cx="151" cy="88" r="4" fill="#102632"/>
+<circle cx="167" cy="88" r="4" fill="#102632"/>
+<circle cx="183" cy="88" r="4" fill="#102632"/>
+</g>
+<g transform="translate(24 256)">
+<rect width="248" height="128" rx="10" fill="#935322" stroke="#102632" stroke-width="2" stroke-dasharray="4 3"/>
+<circle cx="52" cy="61" r="35" fill="white"/>
+<polygon transform="translate(52 61)" fill="#102632" points="-0.00,-25.00 25.00,0.00 -0.00,25.00 -25.00,-0.00"/>
+<rect x="99" y="21" width="136" height="84" rx="8" fill="white"/>
+<text x="167" y="48" font-size="17" font-weight="bold">Dark orange</text>
+<text x="167" y="69" font-size="12">DARK</text>
+<circle cx="167" cy="88" r="4" fill="#102632"/>
+</g>
+<g transform="translate(296 256)">
+<rect width="248" height="128" rx="10" fill="#f58b38" stroke="#102632" stroke-width="2" stroke-dasharray="4 3"/>
+<circle cx="52" cy="61" r="35" fill="white"/>
+<polygon transform="translate(52 61)" fill="#102632" points="-0.00,-25.00 25.00,0.00 -0.00,25.00 -25.00,-0.00"/>
+<rect x="99" y="21" width="136" height="84" rx="8" fill="white"/>
+<text x="167" y="48" font-size="17" font-weight="bold">Orange</text>
+<text x="167" y="69" font-size="12">BASE</text>
+<circle cx="159" cy="88" r="4" fill="#102632"/>
+<circle cx="175" cy="88" r="4" fill="#102632"/>
+</g>
+<g transform="translate(568 256)">
+<rect width="248" height="128" rx="10" fill="#fabf92" stroke="#102632" stroke-width="2" stroke-dasharray="4 3"/>
+<circle cx="52" cy="61" r="35" fill="white"/>
+<polygon transform="translate(52 61)" fill="#102632" points="-0.00,-25.00 25.00,0.00 -0.00,25.00 -25.00,-0.00"/>
+<rect x="99" y="21" width="136" height="84" rx="8" fill="white"/>
+<text x="167" y="48" font-size="17" font-weight="bold">Light orange</text>
+<text x="167" y="69" font-size="12">LIGHT</text>
+<circle cx="151" cy="88" r="4" fill="#102632"/>
+<circle cx="167" cy="88" r="4" fill="#102632"/>
+<circle cx="183" cy="88" r="4" fill="#102632"/>
+</g>
+<g transform="translate(24 402)">
+<rect width="248" height="128" rx="10" fill="#947f2b" stroke="#102632" stroke-width="2" stroke-dasharray="4 3"/>
+<circle cx="52" cy="61" r="35" fill="white"/>
+<polygon transform="translate(52 61)" fill="#102632" points="-0.00,-25.00 6.61,-9.10 23.78,-7.73 10.70,3.48 14.69,20.23 -0.00,11.25 -14.69,20.23 -10.70,3.48 -23.78,-7.73 -6.61,-9.10"/>
+<rect x="99" y="21" width="136" height="84" rx="8" fill="white"/>
+<text x="167" y="48" font-size="17" font-weight="bold">Dark yellow</text>
+<text x="167" y="69" font-size="12">DARK</text>
+<circle cx="167" cy="88" r="4" fill="#102632"/>
+</g>
+<g transform="translate(296 402)">
+<rect width="248" height="128" rx="10" fill="#f6d447" stroke="#102632" stroke-width="2" stroke-dasharray="4 3"/>
+<circle cx="52" cy="61" r="35" fill="white"/>
+<polygon transform="translate(52 61)" fill="#102632" points="-0.00,-25.00 6.61,-9.10 23.78,-7.73 10.70,3.48 14.69,20.23 -0.00,11.25 -14.69,20.23 -10.70,3.48 -23.78,-7.73 -6.61,-9.10"/>
+<rect x="99" y="21" width="136" height="84" rx="8" fill="white"/>
+<text x="167" y="48" font-size="17" font-weight="bold">Yellow</text>
+<text x="167" y="69" font-size="12">BASE</text>
+<circle cx="159" cy="88" r="4" fill="#102632"/>
+<circle cx="175" cy="88" r="4" fill="#102632"/>
+</g>
+<g transform="translate(568 402)">
+<rect width="248" height="128" rx="10" fill="#fae79a" stroke="#102632" stroke-width="2" stroke-dasharray="4 3"/>
+<circle cx="52" cy="61" r="35" fill="white"/>
+<polygon transform="translate(52 61)" fill="#102632" points="-0.00,-25.00 6.61,-9.10 23.78,-7.73 10.70,3.48 14.69,20.23 -0.00,11.25 -14.69,20.23 -10.70,3.48 -23.78,-7.73 -6.61,-9.10"/>
+<rect x="99" y="21" width="136" height="84" rx="8" fill="white"/>
+<text x="167" y="48" font-size="17" font-weight="bold">Light yellow</text>
+<text x="167" y="69" font-size="12">LIGHT</text>
+<circle cx="151" cy="88" r="4" fill="#102632"/>
+<circle cx="167" cy="88" r="4" fill="#102632"/>
+<circle cx="183" cy="88" r="4" fill="#102632"/>
+</g>
+<g transform="translate(24 548)">
+<rect width="248" height="128" rx="10" fill="#297149" stroke="#102632" stroke-width="2" stroke-dasharray="4 3"/>
+<circle cx="52" cy="61" r="35" fill="white"/>
+<polygon transform="translate(52 61)" fill="#102632" points="-0.00,-25.00 4.88,-24.52 9.57,-23.10 13.89,-20.79 17.68,-17.68 20.79,-13.89 23.10,-9.57 24.52,-4.88 25.00,0.00 24.52,4.88 23.10,9.57 20.79,13.89 17.68,17.68 13.89,20.79 9.57,23.10 4.88,24.52 -0.00,25.00 -4.88,24.52 -9.57,23.10 -13.89,20.79 -17.68,17.68 -20.79,13.89 -23.10,9.57 -24.52,4.88 -25.00,-0.00 -24.52,-4.88 -23.10,-9.57 -20.79,-13.89 -17.68,-17.68 -13.89,-20.79 -9.57,-23.10 -4.88,-24.52"/>
+<rect x="99" y="21" width="136" height="84" rx="8" fill="white"/>
+<text x="167" y="48" font-size="17" font-weight="bold">Dark green</text>
+<text x="167" y="69" font-size="12">DARK</text>
+<circle cx="167" cy="88" r="4" fill="#102632"/>
+</g>
+<g transform="translate(296 548)">
+<rect width="248" height="128" rx="10" fill="#45bc7a" stroke="#102632" stroke-width="2" stroke-dasharray="4 3"/>
+<circle cx="52" cy="61" r="35" fill="white"/>
+<polygon transform="translate(52 61)" fill="#102632" points="-0.00,-25.00 4.88,-24.52 9.57,-23.10 13.89,-20.79 17.68,-17.68 20.79,-13.89 23.10,-9.57 24.52,-4.88 25.00,0.00 24.52,4.88 23.10,9.57 20.79,13.89 17.68,17.68 13.89,20.79 9.57,23.10 4.88,24.52 -0.00,25.00 -4.88,24.52 -9.57,23.10 -13.89,20.79 -17.68,17.68 -20.79,13.89 -23.10,9.57 -24.52,4.88 -25.00,-0.00 -24.52,-4.88 -23.10,-9.57 -20.79,-13.89 -17.68,-17.68 -13.89,-20.79 -9.57,-23.10 -4.88,-24.52"/>
+<rect x="99" y="21" width="136" height="84" rx="8" fill="white"/>
+<text x="167" y="48" font-size="17" font-weight="bold">Green</text>
+<text x="167" y="69" font-size="12">BASE</text>
+<circle cx="159" cy="88" r="4" fill="#102632"/>
+<circle cx="175" cy="88" r="4" fill="#102632"/>
+</g>
+<g transform="translate(568 548)">
+<rect width="248" height="128" rx="10" fill="#99dab6" stroke="#102632" stroke-width="2" stroke-dasharray="4 3"/>
+<circle cx="52" cy="61" r="35" fill="white"/>
+<polygon transform="translate(52 61)" fill="#102632" points="-0.00,-25.00 4.88,-24.52 9.57,-23.10 13.89,-20.79 17.68,-17.68 20.79,-13.89 23.10,-9.57 24.52,-4.88 25.00,0.00 24.52,4.88 23.10,9.57 20.79,13.89 17.68,17.68 13.89,20.79 9.57,23.10 4.88,24.52 -0.00,25.00 -4.88,24.52 -9.57,23.10 -13.89,20.79 -17.68,17.68 -20.79,13.89 -23.10,9.57 -24.52,4.88 -25.00,-0.00 -24.52,-4.88 -23.10,-9.57 -20.79,-13.89 -17.68,-17.68 -13.89,-20.79 -9.57,-23.10 -4.88,-24.52"/>
+<rect x="99" y="21" width="136" height="84" rx="8" fill="white"/>
+<text x="167" y="48" font-size="17" font-weight="bold">Light green</text>
+<text x="167" y="69" font-size="12">LIGHT</text>
+<circle cx="151" cy="88" r="4" fill="#102632"/>
+<circle cx="167" cy="88" r="4" fill="#102632"/>
+<circle cx="183" cy="88" r="4" fill="#102632"/>
+</g>
+<g transform="translate(24 694)">
+<rect width="248" height="128" rx="10" fill="#285c8c" stroke="#102632" stroke-width="2" stroke-dasharray="4 3"/>
+<circle cx="52" cy="61" r="35" fill="white"/>
+<polygon transform="translate(52 61)" fill="#102632" points="-19.98,-19.98 19.98,-19.98 19.98,19.98 -19.98,19.98"/>
+<rect x="99" y="21" width="136" height="84" rx="8" fill="white"/>
+<text x="167" y="48" font-size="17" font-weight="bold">Dark blue</text>
+<text x="167" y="69" font-size="12">DARK</text>
+<circle cx="167" cy="88" r="4" fill="#102632"/>
+</g>
+<g transform="translate(296 694)">
+<rect width="248" height="128" rx="10" fill="#429aea" stroke="#102632" stroke-width="2" stroke-dasharray="4 3"/>
+<circle cx="52" cy="61" r="35" fill="white"/>
+<polygon transform="translate(52 61)" fill="#102632" points="-19.98,-19.98 19.98,-19.98 19.98,19.98 -19.98,19.98"/>
+<rect x="99" y="21" width="136" height="84" rx="8" fill="white"/>
+<text x="167" y="48" font-size="17" font-weight="bold">Blue</text>
+<text x="167" y="69" font-size="12">BASE</text>
+<circle cx="159" cy="88" r="4" fill="#102632"/>
+<circle cx="175" cy="88" r="4" fill="#102632"/>
+</g>
+<g transform="translate(568 694)">
+<rect width="248" height="128" rx="10" fill="#97c7f3" stroke="#102632" stroke-width="2" stroke-dasharray="4 3"/>
+<circle cx="52" cy="61" r="35" fill="white"/>
+<polygon transform="translate(52 61)" fill="#102632" points="-19.98,-19.98 19.98,-19.98 19.98,19.98 -19.98,19.98"/>
+<rect x="99" y="21" width="136" height="84" rx="8" fill="white"/>
+<text x="167" y="48" font-size="17" font-weight="bold">Light blue</text>
+<text x="167" y="69" font-size="12">LIGHT</text>
+<circle cx="151" cy="88" r="4" fill="#102632"/>
+<circle cx="167" cy="88" r="4" fill="#102632"/>
+<circle cx="183" cy="88" r="4" fill="#102632"/>
+</g>
+<g transform="translate(24 840)">
+<rect width="248" height="128" rx="10" fill="#3d3270" stroke="#102632" stroke-width="2" stroke-dasharray="4 3"/>
+<circle cx="52" cy="61" r="35" fill="white"/>
+<polygon transform="translate(52 61)" fill="#102632" points="-0.00,-25.00 21.65,-12.50 21.65,12.50 -0.00,25.00 -21.65,12.50 -21.65,-12.50"/>
+<rect x="99" y="21" width="136" height="84" rx="8" fill="white"/>
+<text x="167" y="48" font-size="17" font-weight="bold">Dark indigo</text>
+<text x="167" y="69" font-size="12">DARK</text>
+<circle cx="167" cy="88" r="4" fill="#102632"/>
+</g>
+<g transform="translate(296 840)">
+<rect width="248" height="128" rx="10" fill="#6553ba" stroke="#102632" stroke-width="2" stroke-dasharray="4 3"/>
+<circle cx="52" cy="61" r="35" fill="white"/>
+<polygon transform="translate(52 61)" fill="#102632" points="-0.00,-25.00 21.65,-12.50 21.65,12.50 -0.00,25.00 -21.65,12.50 -21.65,-12.50"/>
+<rect x="99" y="21" width="136" height="84" rx="8" fill="white"/>
+<text x="167" y="48" font-size="17" font-weight="bold">Indigo</text>
+<text x="167" y="69" font-size="12">BASE</text>
+<circle cx="159" cy="88" r="4" fill="#102632"/>
+<circle cx="175" cy="88" r="4" fill="#102632"/>
+</g>
+<g transform="translate(568 840)">
+<rect width="248" height="128" rx="10" fill="#aaa0d9" stroke="#102632" stroke-width="2" stroke-dasharray="4 3"/>
+<circle cx="52" cy="61" r="35" fill="white"/>
+<polygon transform="translate(52 61)" fill="#102632" points="-0.00,-25.00 21.65,-12.50 21.65,12.50 -0.00,25.00 -21.65,12.50 -21.65,-12.50"/>
+<rect x="99" y="21" width="136" height="84" rx="8" fill="white"/>
+<text x="167" y="48" font-size="17" font-weight="bold">Light indigo</text>
+<text x="167" y="69" font-size="12">LIGHT</text>
+<circle cx="151" cy="88" r="4" fill="#102632"/>
+<circle cx="167" cy="88" r="4" fill="#102632"/>
+<circle cx="183" cy="88" r="4" fill="#102632"/>
+</g>
+<g transform="translate(24 986)">
+<rect width="248" height="128" rx="10" fill="#71357d" stroke="#102632" stroke-width="2" stroke-dasharray="4 3"/>
+<circle cx="52" cy="61" r="35" fill="white"/>
+<polygon transform="translate(52 61)" fill="#102632" points="-8.00,-25.00 8.00,-25.00 8.00,-8.00 25.00,-8.00 25.00,8.00 8.00,8.00 8.00,25.00 -8.00,25.00 -8.00,8.00 -25.00,8.00 -25.00,-8.00 -8.00,-8.00"/>
+<rect x="99" y="21" width="136" height="84" rx="8" fill="white"/>
+<text x="167" y="48" font-size="17" font-weight="bold">Dark violet</text>
+<text x="167" y="69" font-size="12">DARK</text>
+<circle cx="167" cy="88" r="4" fill="#102632"/>
+</g>
+<g transform="translate(296 986)">
+<rect width="248" height="128" rx="10" fill="#bc59d1" stroke="#102632" stroke-width="2" stroke-dasharray="4 3"/>
+<circle cx="52" cy="61" r="35" fill="white"/>
+<polygon transform="translate(52 61)" fill="#102632" points="-8.00,-25.00 8.00,-25.00 8.00,-8.00 25.00,-8.00 25.00,8.00 8.00,8.00 8.00,25.00 -8.00,25.00 -8.00,8.00 -25.00,8.00 -25.00,-8.00 -8.00,-8.00"/>
+<rect x="99" y="21" width="136" height="84" rx="8" fill="white"/>
+<text x="167" y="48" font-size="17" font-weight="bold">Violet</text>
+<text x="167" y="69" font-size="12">BASE</text>
+<circle cx="159" cy="88" r="4" fill="#102632"/>
+<circle cx="175" cy="88" r="4" fill="#102632"/>
+</g>
+<g transform="translate(568 986)">
+<rect width="248" height="128" rx="10" fill="#daa4e6" stroke="#102632" stroke-width="2" stroke-dasharray="4 3"/>
+<circle cx="52" cy="61" r="35" fill="white"/>
+<polygon transform="translate(52 61)" fill="#102632" points="-8.00,-25.00 8.00,-25.00 8.00,-8.00 25.00,-8.00 25.00,8.00 8.00,8.00 8.00,25.00 -8.00,25.00 -8.00,8.00 -25.00,8.00 -25.00,-8.00 -8.00,-8.00"/>
+<rect x="99" y="21" width="136" height="84" rx="8" fill="white"/>
+<text x="167" y="48" font-size="17" font-weight="bold">Light violet</text>
+<text x="167" y="69" font-size="12">LIGHT</text>
+<circle cx="151" cy="88" r="4" fill="#102632"/>
+<circle cx="167" cy="88" r="4" fill="#102632"/>
+<circle cx="183" cy="88" r="4" fill="#102632"/>
+</g>
+<text x="420" y="1162" font-size="13">Attach NFC stickers to the backs. These labels are not NFC tags.</text>
+</g></svg>

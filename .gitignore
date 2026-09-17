@@ -1,0 +1,31 @@
+# Anti-Checkers is its own repository, published standalone at
+# jraleman/anti_checkers and consumed as a game folder by godot-base. Neither
+# the superproject's root .gitignore nor godot-base/.gitignore reaches in here
+# — a nested repository keeps its own index — so these rules have to be local.
+#
+# Per the Godot 4.1+ version-control docs, only the engine's generated cache
+# belongs in here. Script/resource .uid files and asset .import files are
+# project state and are committed on purpose; see README.md.
+
+# Engine cache. The host project owns the real one at godot-base/.godot, but
+# opening this folder directly in the editor writes a stray cache beside these
+# files, and it must not follow a clone back into godot-base.
+.godot/
+.import/
+
+# Binary translations compiled from CSV sources.
+*.translation
+
+# Export output, should this folder ever be built standalone.
+/build/
+/exports/
+*.apk
+*.aab
+*.pck
+
+# System / editor noise
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*~

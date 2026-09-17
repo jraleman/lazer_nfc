@@ -1,0 +1,30 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/game/game_shell.tscn" id="1_shell"]
+[ext_resource type="Script" path="res://games/lazer_nfc/gameplay.gd" id="2_game"]
+
+[node name="LazerNfc" instance=ExtResource("1_shell")]
+script = ExtResource("2_game")
+player_one_color = Color(0.486275, 0.901961, 0.823529, 1)
+screen_shake_decay = 55.0
+
+[node name="Background" parent="BackgroundLayer" index="0"]
+material = null
+color = Color(0.031373, 0.07451, 0.117647, 1)
+script = null
+
+[node name="Callout" parent="HUD/Overlay/Margins/Layout" index="2"]
+theme_override_colors/font_color = Color(0.79, 0.88, 0.88, 1)
+autowrap_mode = 3
+
+[node name="Hint" parent="HUD/Overlay/Margins/Layout/BottomRow/HintPanel" index="0"]
+autowrap_mode = 3
+
+[node name="Caption" parent="HUD/RoundOver/Center/ScorePanel/Layout/Overview/Hits/Layout" index="0"]
+text = "ROBOTS RECALLED"
+
+[node name="HitsCaption" parent="HUD/RoundOver/Center/ScorePanel/Layout/Report/Players/PlayerOne/Layout/Stats" index="0"]
+text = "Robots recalled"
+
+[node name="MissesCaption" parent="HUD/RoundOver/Center/ScorePanel/Layout/Report/Players/PlayerOne/Layout/Stats" index="2"]
+text = "Mistakes / escapes"

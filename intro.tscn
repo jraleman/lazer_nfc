@@ -1,0 +1,24 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/boot/intro.tscn" id="1_intro"]
+
+[node name="LazerNfcIntro" instance=ExtResource("1_intro")]
+cards = Array[String](["The little laboratory has a very big idea.", "Every robot has a colour, a shape, and a sound.\nRemember the pattern. Then light them up.", "Keys or touch work straight away.\nOn Android, bind at least three NFC tags to play away from the screen.", "Keep tags comfortably within reach and at least 15 cm apart.\nTap with the upper back of your phone. Lift before tapping again.", "Learn the sounds. Chase a clean sweep.\nOne more experiment?"])
+fade_in = 0.3
+hold = 3.0
+fade_out = 0.25
+next_scene = "res://scenes/menus/main_menu.tscn"
+
+[node name="Card" parent="Frame/Layout/CardHolder" index="0"]
+theme_override_colors/font_color = Color(1, 0.941176, 0.803922, 1)
+
+[node name="Hint" parent="Frame/Layout/Bottom" index="0"]
+theme_override_colors/font_color = Color(0.74, 0.84, 0.86, 1)
+autowrap_mode = 3
+
+[node name="SkipButton" parent="Frame/Layout/Bottom" index="1"]
+custom_minimum_size = Vector2(104, 56)
+tooltip_text = "Skip the laboratory briefing and open the main menu."
+
+[node name="ProgressFill" parent="Progress" index="1"]
+color = Color(0.486275, 0.901961, 0.823529, 0.9)
