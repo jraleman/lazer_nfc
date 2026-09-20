@@ -1,7 +1,7 @@
-# Anti-Checkers is its own repository, published standalone at
-# jraleman/anti_checkers and consumed as a game folder by godot-base. Neither
-# the superproject's root .gitignore nor godot-base/.gitignore reaches in here
-# — a nested repository keeps its own index — so these rules have to be local.
+# LaZer NFC is its own repository, published standalone at
+# jraleman/lazer_nfc and consumed as a game folder by godot-base. Neither the
+# superproject's root .gitignore nor godot-base/.gitignore reaches in here — a
+# nested repository keeps its own index — so these rules have to be local.
 #
 # Per the Godot 4.1+ version-control docs, only the engine's generated cache
 # belongs in here. Script/resource .uid files and asset .import files are

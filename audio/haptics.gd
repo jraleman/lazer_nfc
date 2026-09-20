@@ -168,7 +168,12 @@ func _issue_phase() -> void:
 
 
 func _handheld_supported() -> bool:
-	return OS.has_feature("android") and DisplayServer.get_name() != "headless"
+	# iOS routes vibrate_handheld through Core Haptics from iOS 13 on, so both
+	# duration and amplitude are honoured exactly as on Android.
+	return (
+		(OS.has_feature("android") or OS.has_feature("ios"))
+		and DisplayServer.get_name() != "headless"
+	)
 
 
 func _vibrate(duration_ms: int, amplitude: float) -> void:

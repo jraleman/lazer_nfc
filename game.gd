@@ -24,8 +24,10 @@ static func manifest() -> GameManifest:
 	game.tunables = OPTIONS.TUNABLES
 	game.control_bindings = OPTIONS.CONTROL_BINDINGS
 	game.stats_url = "https://deskcansaw.com/stats/lz"
-	game.tutorial_video_path = "res://assets/video/tutorial_lazer_nfc.ogv"
-	game.tutorial_poster_path = "res://assets/video/tutorial_lazer_nfc_poster.webp"
+	game.tutorial_video_path = "res://games/lazer_nfc/assets/video/tutorial.ogv"
+	game.tutorial_poster_path = (
+		"res://games/lazer_nfc/assets/video/tutorial_poster.webp"
+	)
 	game.share_art_scene_path = "res://games/lazer_nfc/ui/share_art.tscn"
 	game.share_art_style = GAME_ID
 	game.copy = {
@@ -60,6 +62,9 @@ static func manifest() -> GameManifest:
 			+ "On Android, enabled NFC offers a guided tag roll call. "
 			+ "Tap the upper back of the phone against each labelled tag. "
 			+ "Lift before tapping the same tag again.\n"
+			+ "On iPhone the same roll call runs behind Apple's scanning "
+			+ "sheet, which covers the lab while it waits. Dismiss it with "
+			+ "Cancel to switch to keys and touch.\n"
 			+ "Touch answers mark the run Assisted (half score); keys and "
 			+ "NFC use full scoring. Trying sounds before a run is free. "
 			+ "Esc pauses. Rebind keys in Settings > Controls."
@@ -114,7 +119,7 @@ static func manifest() -> GameManifest:
 			"lines": [
 				"Colour, shape and instrument identify every robot",
 				"Rebindable keys, touch fallback, captions and reduced motion",
-				"Native Android NFC reader mode with optional hardware",
+				"Native Android reader mode and iPhone Core NFC, hardware optional",
 			],
 		},
 	]

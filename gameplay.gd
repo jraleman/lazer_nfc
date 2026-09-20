@@ -150,6 +150,7 @@ func _build_playfield() -> void:
 	_nfc.name = "NfcReader"
 	_nfc.availability_changed.connect(_on_nfc_availability_changed)
 	_nfc.reader_error.connect(_on_reader_error)
+	_nfc.scan_cancelled.connect(_on_scan_cancelled)
 	_nfc.tag_scanned.connect(_on_tag_scanned)
 	add_child(_nfc)
 	get_viewport().size_changed.connect(_queue_layout)
@@ -416,6 +417,7 @@ func _present() -> void:
 	]
 	if _state.state == RunState.State.READY:
 		_callout.text = "A LITTLE PRACTICE. A BIG BRIGHT IDEA."
+	_sync_reader_prompt()
 
 
 func _phase_message() -> String:
@@ -515,6 +517,7 @@ func _refresh_binding_message() -> void:
 	if not _binding_notice.is_empty():
 		message = _binding_notice + "\n" + message
 	_deck.set_binding(true, message)
+	_sync_reader_prompt()
 
 
 func _skip_binding() -> void:
@@ -689,6 +692,42 @@ func _on_reader_error(message: String) -> void:
 	_sync_deck()
 	if _round_active and not _leaving:
 		open_pause_menu()
+
+
+## Dismissing the iOS scanning sheet is the one escape from a scan whose system
+## UI swallows every touch, so treat it as a request for keys and touch. The
+## run model is left untouched: the sequence in progress is still answerable.
+func _on_scan_cancelled() -> void:
+	if not _round_active or _leaving:
+		return
+	if _binding:
+		_use_fallback(false)
+		return
+	_physical_run = false
+	_fallback_requested = true
+	_source_note = "Scanning stopped. Keys and touch are ready."
+	_sound.announce(_source_note, &"nfc_off")
+	_sync_deck()
+	open_pause_menu()
+
+
+## The iOS scanning sheet covers the screen, so the current phase has to travel
+## with it. Back ends without a sheet simply store the text.
+func _sync_reader_prompt() -> void:
+	if _nfc == null or not _nfc.modal():
+		return
+	var text := ""
+	if _binding and _binding_index < _binding_order.size():
+		text = "Tap the tag you want for %s." % Palette.label(_binding_order[_binding_index])
+	elif _state.state == RunState.State.AWAITING:
+		text = "Recall %d of %d. Tap that robot's colour." % [
+			_state.recall_index + 1, _state.sequence.size(),
+		]
+	elif _state.state == RunState.State.READY:
+		text = "Tap a tag to start, or Cancel for keys and touch."
+	else:
+		text = "Listen to the robots. Tap a tag when recall opens."
+	_nfc.set_prompt(text)
 
 
 func _update_reader_hint(delta: float) -> void:

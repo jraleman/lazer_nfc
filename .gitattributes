@@ -1,11 +1,11 @@
-# Line endings for the Anti-Checkers repository.
+# Line endings and diff behaviour for the LaZer NFC repository.
 #
 # A nested repository keeps its own attributes, so the superproject's
 # .gitattributes does not reach in here — this is a local copy of the same
 # policy. Godot writes LF; pinning eol=lf keeps a Windows checkout from
 # disagreeing with the editor.
 #
-# Safe as-is: all 45 blobs are already LF in the index, so nothing
+# Safe as-is: all 422 blobs are already LF in the index, so nothing
 # renormalizes.
 
 # Normalize EOL for everything Git detects as text.
@@ -21,10 +21,48 @@
 *.svg       text eol=lf
 *.md        text eol=lf
 
+# The Android export template is versioned here, so its build scripts and
+# wrapper are too. gradlew.bat is parsed by cmd.exe, which needs CRLF — the
+# blanket eol=lf rule above would otherwise check it out unrunnable.
+*.gradle    text eol=lf
+*.properties text eol=lf
+*.xml       text eol=lf
+*.json      text eol=lf
+gradlew     text eol=lf
+*.bat       text eol=crlf
+*.cmd       text eol=crlf
+
+# The iOS export plugin is versioned here too. build_plugin.sh is parsed by
+# bash on macOS, and Objective-C++ sources are compiled by clang; both reject
+# or mis-report CRLF, so they stay LF even on a Windows checkout.
+*.sh        text eol=lf
+*.mm        text eol=lf
+*.h         text eol=lf
+*.gdip      text eol=lf
+*.plist     text eol=lf
+*.entitlements text eol=lf
+
 # Authored binary assets: never normalize, never diff as text.
 *.png       binary
 *.webp      binary
+*.jpg       binary
+*.jpeg      binary
 *.wav       binary
 *.mp3       binary
+*.ogg       binary
 *.ogv       binary
 *.ttf       binary
+*.otf       binary
+
+# Prebuilt Android/Java artifacts that ship with the export template.
+*.jar       binary
+*.aar       binary
+*.so        binary
+*.dll       binary
+*.exe       binary
+*.class     binary
+*.zip       binary
+
+# Prebuilt Apple artifacts, in case a staged library is ever vendored.
+*.a         binary
+*.dylib     binary

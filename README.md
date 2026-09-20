@@ -83,6 +83,12 @@ Rebind tags request switches back to physical setup.
 Skipping keeps an existing binding. A deliberate roll call can relabel a tag,
 but one tag cannot serve two prompts in the same roll call.
 
+iPhone 7 and newer read the same tags through Core NFC. Apple requires a
+system scanning sheet that covers the lab and takes every touch while it
+waits, so the current prompt is repeated inside the sheet and its **Cancel**
+button switches that run to keys and touch without disturbing a sequence
+already in progress. No iPad has a reader; iPads play with keys and touch.
+
 Print `assets/tag-sheet.svg`, attach real NFC stickers to the backs, and bind
 them in the game. The printed page itself is not an NFC tag. Start with the
 seven base labels; all fourteen dark/light instruments are also included.
@@ -106,13 +112,20 @@ The reader stops on pause, app backgrounding, results and navigation. A lost
 adapter pauses the experiment and exposes fallback controls. Resume restores
 the current recall window in full; delayed pre-pause callbacks cannot answer
 a new robot. A per-UID debounce rejects jitter without suppressing a different
-tag. Estimated RF latency is an age, never an Android timestamp compared
+tag. Estimated RF latency is an age, never a native timestamp compared
 directly with Godot's paused clock.
 
 Build the game-local Android plugin and Godot's Gradle template before using
 the **Android - LaZer NFC** preset. See [`android/README.md`](android/README.md)
-for the native toolchain, AAR and export requirements. Hardware behaviour
-still requires a physical NFC phone; desktop fallback is not a hardware test.
+for the native toolchain, AAR and export requirements.
+
+The **iOS - LaZer NFC** preset needs the Core NFC plugin built and staged on
+macOS first, plus an App Store Team ID and an App ID with tag reading enabled.
+See [`ios/README.md`](ios/README.md) for the toolchain, staging layout, the
+entitlement the export writes for you and the three things it cannot.
+
+Hardware behaviour still requires a physical NFC phone; desktop fallback is
+not a hardware test, and neither is the iOS Simulator, which has no radio.
 
 ## Presentation and accessibility
 
@@ -136,7 +149,7 @@ alone.
 | `game.gd`, `lazer_nfc_options.gd` | Manifest, branding, stable options and key bindings |
 | `gameplay.gd`, `gameplay.tscn` | Inherited shell, input lifecycle, tag setup and result mapping |
 | `run/` | Pure palette, seeded sequences, recall rules and merged tag persistence |
-| `input/`, `android/` | Keyboard, motion and actual native NFC reader |
+| `input/`, `android/`, `ios/` | Keyboard, motion and the native Android and Core NFC readers |
 | `arena/`, `ui/` | Read-only toy lab, native controls and shared-card art |
 | `audio/`, `assets/audio/` | Scene-owned audio/haptics and original baked PCM |
 | `tools/` | Offline audio, printable labels, cover and tutorial authoring |

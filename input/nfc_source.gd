@@ -5,6 +5,9 @@ extends Node
 signal tag_scanned(uid: String, age_ms: int)
 signal availability_changed(available: bool, reason: String)
 signal reader_error(message: String)
+## iOS only: the player dismissed the system scanning sheet, which is the one
+## way out of a scan on a device whose sheet swallows every touch.
+signal scan_cancelled
 
 const OPTIONS = preload("res://games/lazer_nfc/lazer_nfc_options.gd")
 const TagBindings = preload("res://games/lazer_nfc/run/tag_bindings.gd")
@@ -21,6 +24,9 @@ var _generation := 0
 var _start_queued := false
 var _seen_ms: Dictionary[String, int] = {}
 var _connected := false
+var _modal := false
+var _prompt := ""
+var _can_prompt := false
 
 
 func _init(plugin: Object = null, clock_msec: Callable = Callable()) -> void:
@@ -46,6 +52,12 @@ func _ready() -> void:
 		_plugin.connect(&"tag_discovered", _on_tag_discovered)
 		_plugin.connect(&"adapter_state", _on_adapter_state)
 		_plugin.connect(&"reader_error", _on_reader_error)
+		# Everything below is optional so one adapter serves both back ends:
+		# Android reads in the background, iOS behind a system sheet it owns.
+		_modal = _plugin.has_method(&"is_modal") and bool(_plugin.call(&"is_modal"))
+		_can_prompt = _plugin.has_method(&"set_prompt")
+		if _plugin.has_signal(&"reader_cancelled"):
+			_plugin.connect(&"reader_cancelled", _on_reader_cancelled)
 		_connected = true
 	_refresh_availability(true)
 	_queue_start()
@@ -54,6 +66,21 @@ func _ready() -> void:
 ## Availability describes the device, not whether the game has requested its reader.
 func available() -> bool:
 	return _available
+
+
+## True when the reader takes over the screen while it scans, as Core NFC does.
+func modal() -> bool:
+	return _modal
+
+
+## Text for the iOS scanning sheet. Stored so a reader started later still
+## explains what the tap is for; ignored by back ends that show no UI.
+func set_prompt(text: String) -> void:
+	if _prompt == text:
+		return
+	_prompt = text
+	if _can_prompt and _connected and is_instance_valid(_plugin):
+		_plugin.call(&"set_prompt", text)
 
 
 ## No reader starts in a menu merely because the Android activity resumed.
@@ -98,6 +125,8 @@ func _exit_tree() -> void:
 		_plugin.disconnect(&"tag_discovered", _on_tag_discovered)
 		_plugin.disconnect(&"adapter_state", _on_adapter_state)
 		_plugin.disconnect(&"reader_error", _on_reader_error)
+		if _plugin.has_signal(&"reader_cancelled"):
+			_plugin.disconnect(&"reader_cancelled", _on_reader_cancelled)
 	_connected = false
 
 
@@ -122,6 +151,8 @@ func _activate_reader(generation: int) -> void:
 		return
 	_seen_ms.clear()
 	_active = true
+	if _can_prompt and not _prompt.is_empty():
+		_plugin.call(&"set_prompt", _prompt)
 	_plugin.call(&"enable_reader")
 
 
@@ -178,6 +209,25 @@ func _on_adapter_state(enabled: bool) -> void:
 
 func _on_reader_error(message: String) -> void:
 	_handle_error.call_deferred(message, _generation)
+
+
+func _on_reader_cancelled() -> void:
+	# Core NFC emits this on the main thread, and dismissing the sheet is a
+	# decision rather than a stale callback, so the request is revoked at once.
+	# Deferring the revocation would let a pause or a reset_debounce() in the
+	# same frame move the epoch on, drop the cancellation and reopen the sheet.
+	if not _requested:
+		return
+	stop()
+	_notify_cancelled.call_deferred()
+
+
+## Cancelling is a choice, not a fault: the reader stops but the device stays
+## available, so the player can start scanning again from the pause menu.
+func _notify_cancelled() -> void:
+	if not is_inside_tree():
+		return
+	scan_cancelled.emit()
 
 
 func _handle_error(message: String, generation: int) -> void:

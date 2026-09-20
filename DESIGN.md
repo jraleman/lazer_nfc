@@ -113,7 +113,7 @@ right-hand column is why the framework's answer wins.
 | Own pause state (`PAUSED` in the state machine) | The shell's pause overlay | One pause UI for the whole product. The game only reacts: reader off, clock frozen, current window reissued on resume. |
 | Own HUD labels, own results/score screen | `%TimeLabel`, `%TimeProgress`, `%Callout`, `%Hint`, the results and stats panels | A second scoreboard would drift from the share card, which reads the shell's numbers. |
 | Lives, timers and score are private to `RoundController` | A **node-free run model** the scene drives, feeding `_scores`, `_streaks` and `_round_totals()` | Headless `SceneTree` tests can load a node-free model before autoloads exist; they cannot load a scene that touches `Settings`. |
-| Timing from `Time.get_ticks_msec()` | An **explicit model clock** accumulated in `_update_round(delta)` | `get_tree().paused` stops `_process`, but wall-clock time keeps running. A 20-second pause must not close a 4-second window. Latency compensation still uses wall-clock deltas (§6.3) because that is what it measures. |
+| Timing from `Time.get_ticks_msec()` | An **explicit model clock** accumulated in `_update_round(delta)` | `get_tree().paused` stops `_process`, but wall-clock time keeps running. A 20-second pause must not close a 4-second window. Latency compensation still uses wall-clock deltas (§6.4) because that is what it measures. |
 | IDLE screen with spoken gestures as the only "menu" | Settings → Game and Settings → Controls, plus the same gestures as *shortcuts that write those same keys* | The game has a menu now; pretending it does not would hide options from every player who is looking at the screen. The gestures stay because the design goal — playable with the screen face-down — is unchanged. |
 | Portrait lock as a design rule | Portrait lock as a **standalone Android preset override**, on a layout that still survives resize | The project requires portrait-phone-through-ultrawide layouts. The shell HUD already does this; the arena must too (`_playfield_bounds()`). |
 
@@ -129,7 +129,7 @@ games/lazer_nfc/
   run/sequence.gd          # seeded sequence generation
   run/palette.gd           # colours, shades, icons, notes
   run/tag_bindings.gd      # UID -> color_id map, roll call, ConfigFile merge
-  input/nfc_source.gd      # Android plugin bridge, debounce, latency comp
+  input/nfc_source.gd      # native plugin bridge, debounce, latency comp
   input/key_source.gd      # declared bindings and shade modifiers
   input/motion_source.gd   # accelerometer magnitude (momentum bonus only)
   arena/arena.gd / .tscn   # toy lab, concealed robots, deadline bar and laser pops
@@ -141,6 +141,7 @@ games/lazer_nfc/
   ui/menu_*.tres           # standalone menu skin, background, plaque
   assets/                  # baked colour samples, icons, logo
   android/                 # game-owned Godot v2 plugin (AAR + export plugin)
+  ios/                     # game-owned Core NFC plugin (xcframework + export plugin)
   tools/bake_colors.py     # original offline PCM instrument/cue authoring
   tools/bake_voice.ps1     # offline local speech, no runtime TTS dependency
   tools/render_tags.gd     # printable labels from the live palette/glyphs
@@ -194,8 +195,10 @@ static func manifest() -> GameManifest:
 	game.achievements = { ... }             # §5.4
 	game.credits = [ ... ]
 	game.theme = _theme()
-	game.tutorial_video_path = "res://assets/video/tutorial_lazer_nfc.ogv"
-	game.tutorial_poster_path = "res://assets/video/tutorial_lazer_nfc_poster.webp"
+	game.tutorial_video_path = "res://games/lazer_nfc/assets/video/tutorial.ogv"
+	game.tutorial_poster_path = (
+		"res://games/lazer_nfc/assets/video/tutorial_poster.webp"
+	)
 	return game
 ```
 
@@ -206,7 +209,8 @@ Notes that are contracts, not preferences:
 - `stats_url` must stay within `ShareQrCode.MAX_URL_BYTES` (42 UTF-8 bytes) or
   the QR stops scanning after the card is downscaled to 600×315. A project
   setting `share/stats_urls/lazer_nfc` overrides it per build.
-- The walkthrough clip is host-owned (`res://assets/video/`) and recorded with
+- The walkthrough clip is game-owned (`res://games/lazer_nfc/assets/video/`) and
+  recorded with the host's
   `tools/record_tutorials.ps1`. NFC cannot be recorded on a desktop, so the
   clip shows the **keyboard fallback** playing a real run. Shipping no clip is
   a supported state — `instructions_video_test.gd` checks that the screen falls
@@ -623,13 +627,22 @@ the one colour-answer seam.
 | `tag_scanned(uid, age_ms)` | A lowercase hexadecimal UID and compensated elapsed age |
 | `availability_changed(available, reason)` | Device availability, separate from reader activation |
 | `reader_error(message)` | A real failure, surfaced to the player |
+| `scan_cancelled` | *iOS.* The player dismissed the system scanning sheet |
 | `available()` | Whether a usable adapter exists |
+| `modal()` | Whether scanning covers the screen, as Core NFC's sheet does |
+| `set_prompt(text)` | Phase text for a reader that shows its own UI; stored otherwise |
 | `start()` / `stop()` | Explicit game request; no reader runs merely because the node exists |
 | `reset_debounce()` | Invalidate pending callbacks and drain them before reopening |
 
 Connect the signals before adding the node to the tree, so the initial
 availability notification is not lost. `no_plugin`, `no_hardware` and
 `disabled` enter the real fallback, not a mock NFC stream.
+
+One adapter serves both back ends. The four methods and three signals the
+Android plugin provides are mandatory and validated at `_ready()`; everything
+iOS adds is discovered with `has_method` and `has_signal`, never by asking
+which platform is running. A test double decides its own capabilities, and a
+future back end that gains or loses a sheet needs no change here.
 
 Both native and GDScript layers invalidate callback generations on stop,
 pause and scene exit. Debounce is per UID, including an A-B-A sequence.
@@ -682,30 +695,104 @@ enabled only while a run is live: `_finish_round()`, the pause overlay opening
 and `_exit_tree()` all disable it. A scene that left the tree must never
 process a discovery.
 
-### 6.3 Latency budget
+### 6.3 The iOS plugin
 
+A **game-owned** Core NFC plugin in `games/lazer_nfc/ios/`: Objective-C++
+sources, a `.gdip` descriptor, a macOS build script and an
+`EditorExportPlugin`, registered through the same `[editor_plugins]` list. It
+registers the singleton under the same name, `LazerNfc`, so `NfcSource` finds
+it without a platform branch.
+
+Godot scans `<host project>/ios/plugins` and recurses one level only, so the
+game folder cannot own that path. `ios/build_plugin.sh` stages the `.gdip` and
+both xcframeworks into it, exactly as the Android build stages its AAR into
+`android/bin/`. The full build, staging and signing contract lives in
+`ios/README.md`.
+
+Use `NFCTagReaderSession`, not `NFCNDEFReaderSession`: we want identifiers, and
+the NDEF session neither exposes a UID nor lets us skip the record read.
+
+Core NFC differs from reader mode in four ways that reach the design, not just
+the plugin:
+
+- **The scan sheet is mandatory.** It covers the lab and takes every touch. Its
+  only writable part is `alertMessage`, so the current phase is repeated there
+  by `_sync_reader_prompt()`; its Cancel button is the only in-scan escape.
+- **Cancelling is a choice, not a failure.** `reader_cancelled` revokes the
+  request while leaving the device *available*. The run switches to keys and
+  touch with its model untouched — a sequence in progress is still answerable —
+  and the pause menu opens. `_physical_run` is now false, so closing the pause
+  menu does not reopen the sheet.
+
+  Unlike a scan, a cancellation is **not** epoch-scoped: `_on_reader_cancelled`
+  calls `stop()` there and then and defers only the outward signal. Deferring
+  the revocation would let a pause or a `reset_debounce()` in the same frame
+  advance `_generation`, discard the cancellation and leave the request
+  standing for the next resume to act on — reopening the sheet the player just
+  dismissed. This is safe precisely because Core NFC delivers the callback on
+  the main thread, which is also where Godot's iOS loop runs.
+- **There is no presence check.** Android's `EXTRA_READER_PRESENCE_CHECK_DELAY`
+  has no Core NFC equivalent, and a tag resting on the phone is rediscovered
+  after every `restartPolling()` *and* after every session renewal. The plugin
+  emulates one: after reporting a UID it **pins** that identifier and connects
+  to the tag, then polls `NFCTag.isAvailable` every 250 ms and unpins on
+  removal. A rediscovery of the pinned identifier is swallowed, so the two
+  ceilings — 5 s on the removal poll, 8 s on the pin itself — buy robustness
+  against a stuck `isAvailable` or a failed connect without ever costing a
+  duplicate answer.
+- **FeliCa is not polled.** `NFCPollingISO18092` demands an enumerated
+  `com.apple.developer.nfc.readersession.felica.systemcodes` list, and asking
+  for it without one invalidates the whole session rather than skipping FeliCa,
+  so requesting it would break every scan to support a tag class the game does
+  not ship.
+
+Sessions expire after roughly a minute and are reopened after 0.6 s;
+`SystemIsBusy` retries three times before surfacing an error. Only real
+backgrounding stops the reader, because presenting the sheet can resign the
+app's active state and must not be read as the player leaving.
+
+Info.plist and entitlement additions:
+
+```xml
+<key>NFCReaderUsageDescription</key>          <!-- from lazer_nfc.gdip -->
+<key>com.apple.developer.nfc.readersession.formats</key>
+<array><string>TAG</string></array>           <!-- written by export_plugin.gd -->
+```
+
+`nfc` is deliberately absent from `UIRequiredDeviceCapabilities`, mirroring
+`android:required="false"`: an NFC-less iPhone installs the game and lands on
+the touch pad. The usage description is not optional — iOS terminates the app
+at the first scan without it — and the entitlement requires the capability on
+the App ID, which no exporter can set.
+
+### 6.4 Latency budget
 | Stage | Typical | Budget |
 | --- | --- | --- |
-| Tag enters field → anticollision → `onTagDiscovered` | 40–120 ms | 120 ms |
-| Binder thread → main thread (`call_deferred`, next frame at 60 fps) | ≤ 17 ms | 20 ms |
+| Tag enters field → anticollision → native discovery callback | 40–120 ms | 120 ms |
+| Native callback thread → main thread (`call_deferred`, next frame at 60 fps) | ≤ 17 ms | 20 ms |
 | `TagBindings` lookup + scene dispatch | < 1 ms | 5 ms |
 | **Total** | ~80–140 ms | **≤ 150 ms** |
 
 These are design budgets, not physical-device measurements. Native code adds
-the **80 ms RF estimate once** when computing elapsed callback age. GDScript
-adds only its own deferred queue time. A physical time is compared with the
-current model window as `model.clock - age`.
+the **80 ms RF estimate once** when computing elapsed callback age, on both
+platforms, so one age contract covers them. GDScript adds only its own deferred
+queue time. A physical time is compared with the current model window as
+`model.clock - age`.
 
 Physical grace is **150 ms** beyond the visible deadline. Timeout dispatch
 waits a further **80 ms** for delivery; that is not an extra 80 ms of physical
 grace. Ages outside 0–230 ms and physical times before this window are
-rejected. Android and Godot absolute clock epochs are never compared.
+rejected. Native and Godot absolute clock epochs are never compared: Android
+uses `elapsedRealtime()` and iOS `CLOCK_UPTIME_RAW`, and both leave as ages.
 
-### 6.4 Debounce and duplicate reads
+### 6.5 Debounce and duplicate reads
 
 - Reader mode fires once per discovery. A tag held still does not re-fire; a
   tag jittering at the field edge re-fires every 100–250 ms. The 500 ms
   same-UID debounce covers jitter.
+- iOS has no such guarantee, so the plugin pins the reported identifier and
+  waits for RF removal (§6.3). The same 500 ms debounce still backs it up, for
+  the case where a tag is never reported as gone and polling restarts anyway.
 - Different UIDs are never debounced against each other: swinging past a wrong
   tag onto the right one within 500 ms must register the right one.
 - Legit consecutive same-colour enemies (round ≥ 4) need a lift-and-retap;
@@ -713,7 +800,7 @@ rejected. Android and Godot absolute clock epochs are never compared.
 - The double-scan gesture uses two reads of one UID that are ≥ debounce apart
   and ≤ `DOUBLE_SCAN_MS` apart.
 
-### 6.5 Keyboard and touch
+### 6.6 Keyboard and touch
 
 There is no separate "debug input": the fallback **is** the declared control
 scheme of §4.1, which is why it appears on the Controls tab and in the
@@ -755,7 +842,7 @@ instructions like any other game's keys.
 | Microphone | Clap to fire | Latency > 150 ms, false triggers from the game's own audio | — | **Cut** |
 | Microphone | Voice-naming the colour | Real value for limited mobility, but 300–800 ms recognition latency | `SpeechRecognizer` plugin | **Stretch** (accessibility) |
 | Haptics | Per-event patterns | Primary non-visual confirmation | `Input.vibrate_handheld(ms, amplitude)` | **MVP** |
-| Touchscreen | Fallback pad | A complete alternative to NFC or a keyboard | Shape-labelled `Button`s | **MVP** (§6.5) |
+| Touchscreen | Fallback pad | A complete alternative to NFC or a keyboard | Shape-labelled `Button`s | **MVP** (§6.6) |
 
 ### 7.2 One answer seam
 
@@ -1083,6 +1170,7 @@ declared in the manifest and can be overridden per project:
 | `input_devices/sensors/enable_gyroscope/magnetometer.lazer_nfc` | false | Battery for nothing |
 | `share/stats_urls/lazer_nfc` | `https://deskcansaw.com/stats/lz` | QR target, ≤ 42 bytes. Optional — the manifest already carries it |
 | `editor_plugins/enabled` | includes `res://games/lazer_nfc/android/plugin.cfg` | Ships the AAR with the Android export |
+| `editor_plugins/enabled` | includes `res://games/lazer_nfc/ios/plugin.cfg` | Ships the Core NFC library and entitlement with the iOS export |
 
 **`run/main_scene.lazer_nfc` has been removed.** The APK follows the same
 `res://scenes/boot/studio_logo.tscn` boot as every other build, and reaches
@@ -1103,7 +1191,6 @@ applies the portrait, audio and stable-user-directory feature overrides.
 The export preset **Android — LaZer NFC** carries `custom_features="lazer_nfc"`
 and needs Godot's Gradle build enabled so the plugin AAR is packaged. Because
 the catalog then holds exactly one game, the framework does the rest for free:
-
 - the title screen takes its name and tagline from the manifest;
 - the Play button starts the game directly, with no picker;
 - `intro.tscn` replaces the framework intro (and is the natural place for the
@@ -1112,6 +1199,14 @@ the catalog then holds exactly one game, the framework does the rest for free:
 - the manifest's `GameTheme` dresses every screen;
 - **Controls** and **Game** sit on the main menu, so tags, keys and difficulty
   are configurable before the first run.
+
+**iOS — LaZer NFC** carries the same custom feature and targets iPhone only
+(`application/targeted_device_family=0`), since no iPad has a reader. It needs
+the Core NFC plugin built and staged on macOS first; a missing library fails
+the export rather than producing an apparently NFC-capable app. Two preset
+fields have no default that can work — `application/app_store_team_id` and the
+App ID's tag-reading capability — and exporting from Windows or Linux yields
+the Xcode project only, never an `.ipa`.
 
 ---
 
@@ -1196,19 +1291,23 @@ play from the main menu to the results panel and press **Play Again**.
 - [x] Node-free, seeded model with fair deadlines, combos and rolling capped patterns
 - [x] Guided tag setup, minimum three hues, skipping and merge-safe relabelling
 - [x] Native Android reader, key/touch fallback and bounded optional motion input
+- [x] Native iPhone Core NFC reader behind the same adapter, sheet text and cancel path
 - [x] Original 3D toy laboratory, all shade identities, concealment and bounded effects
 - [x] READY sound practice, meaningful feedback, achievements, intro, theme and share art
 - [x] Original audio/voice authoring sources and a generated 21-label print sheet
 - [x] Normal framework boot retained; archived/private folders cannot shadow live manifests
 - [x] Assembled scene, audio, responsive layouts and catalog/media integration
 - [x] Recorded real-input tutorial and signed ARM64 APK with the native NFC reader
+- [ ] iOS plugin compiled on macOS and exported with a real Team ID and profile
 - [ ] Physical-phone NFC and covered-screen playthrough acceptance
 
 Physical NFC timing and covered-screen usability remain device acceptance
-work, not something inferred from a desktop fallback. The existing shared
-accessibility suite also has a Desk-Can-Saw hint-text assertion that fails
-with this game removed; this implementation does not change that game's copy
-or weaken the assertion.
+work, not something inferred from a desktop fallback. The iOS library cannot
+be compiled or run on this Windows machine at all, and the iOS Simulator has
+no radio, so its slice honestly reports unsupported hardware. The existing
+shared accessibility suite also has a Desk-Can-Saw hint-text assertion that
+fails with this game removed; this implementation does not change that game's
+copy or weaken the assertion.
 
 **Stretch, explicitly not in v1**
 

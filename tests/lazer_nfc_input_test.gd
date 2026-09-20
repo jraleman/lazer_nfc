@@ -44,6 +44,28 @@ class FakePlugin extends RefCounted:
 		stops += 1
 
 
+## Core NFC owns the screen while it scans, announces the phase in its own
+## sheet, and lets the player dismiss it. None of that exists on Android, so
+## the adapter has to discover each capability rather than assume a platform.
+class FakeModalPlugin extends FakePlugin:
+	signal reader_cancelled
+
+	var prompts: Array[String] = []
+
+	func is_modal() -> bool:
+		return true
+
+	func set_prompt(text: String) -> void:
+		prompts.append(text)
+
+	## The sheet's Cancel button revokes the request natively before the signal
+	## reaches GDScript, exactly as the Objective-C reader does.
+	func cancel() -> void:
+		reading = false
+		stops += 1
+		reader_cancelled.emit()
+
+
 func _initialize() -> void:
 	_run.call_deferred()
 
@@ -53,6 +75,7 @@ func _run() -> void:
 	_test_motion()
 	await _test_availability()
 	await _test_reader_lifecycle()
+	await _test_modal_reader()
 	if _failures.is_empty():
 		print("lazer_nfc_input_test: %d checks passed." % _checks)
 	else:
@@ -343,6 +366,88 @@ func _test_reader_lifecycle() -> void:
 	host.free()
 	await _settle()
 	_expect(scans.size() == 5, "A departed scene never handles queued or later scans.")
+
+
+func _test_modal_reader() -> void:
+	var plugin := FakeModalPlugin.new()
+	var clock := FakeClock.new()
+	var reader := NfcSource.new(plugin, clock.milliseconds)
+	var host := Node.new()
+	host.process_mode = Node.PROCESS_MODE_ALWAYS
+	get_root().add_child(host)
+	var scans: Array[Dictionary] = []
+	var errors: Array[String] = []
+	var cancels: Array[int] = []
+	reader.tag_scanned.connect(func(uid: String, age: int) -> void:
+		scans.append({"uid": uid, "age": age}))
+	reader.reader_error.connect(func(message: String) -> void: errors.append(message))
+	reader.scan_cancelled.connect(func() -> void: cancels.append(1))
+	host.add_child(reader)
+
+	_expect(reader.modal(), "A reader that owns the screen reports itself as modal.")
+	_expect(plugin.prompts.is_empty(), "No sheet text is pushed before a reader is requested.")
+
+	reader.set_prompt("Tap a tag to start.")
+	_expect(plugin.prompts == ["Tap a tag to start."],
+		"Prompt text reaches a reader that can display it.")
+	reader.set_prompt("Tap a tag to start.")
+	_expect(plugin.prompts.size() == 1, "Unchanged prompt text is not pushed again every frame.")
+
+	reader.stop()
+	reader.set_prompt("Recall 1 of 3.")
+	reader.start()
+	await _settle()
+	_expect(plugin.reading, "A modal reader starts through the same request path.")
+	_expect(plugin.prompts.back() == "Recall 1 of 3.",
+		"A prompt set while stopped is reapplied when the sheet opens.")
+
+	plugin.tag_discovered.emit("04AA0001", 80)
+	clock.now = 1000
+	await _settle()
+	_expect(scans.size() == 1, "A modal reader still delivers scans through the shared pipeline.")
+
+	plugin.cancel()
+	await _settle()
+	_expect(cancels.size() == 1, "Dismissing the sheet is reported as a cancellation.")
+	_expect(errors.is_empty(), "A cancellation is a choice, not a reader error.")
+	_expect(reader.available(), "Cancelling leaves the hardware available for a later scan.")
+	_expect(not plugin.reading, "Cancelling leaves the native reader closed.")
+
+	var starts := plugin.starts
+	reader.notification(Node.NOTIFICATION_APPLICATION_PAUSED)
+	reader.notification(Node.NOTIFICATION_APPLICATION_RESUMED)
+	reader.reset_debounce()
+	await _settle()
+	_expect(plugin.starts == starts and not plugin.reading,
+		"No lifecycle callback reopens a sheet the player deliberately dismissed.")
+	plugin.tag_discovered.emit("04BB0002", 80)
+	await _settle()
+	_expect(scans.size() == 1, "A cancelled reader cannot deliver a late scan.")
+
+	reader.start()
+	await _settle()
+	_expect(plugin.reading and cancels.size() == 1,
+		"An explicit restart reopens the sheet without replaying the cancellation.")
+
+	# Cancel is the only escape from a sheet that swallows every touch, so it
+	# cannot be epoch-scoped: a pause or a round rebuild in the same frame must
+	# not let the notification be dropped, nor leave the request standing for a
+	# later resume to act on.
+	plugin.cancel()
+	reader.reset_debounce()
+	reader.notification(Node.NOTIFICATION_APPLICATION_PAUSED)
+	reader.notification(Node.NOTIFICATION_APPLICATION_RESUMED)
+	await _settle()
+	_expect(cancels.size() == 2, "A cancellation survives an epoch change in the same frame.")
+	_expect(not plugin.reading, "An epoch change cannot resurrect a dismissed sheet.")
+	_expect(reader.available(), "A cancellation racing the lifecycle still leaves hardware available.")
+
+	host.remove_child(reader)
+	_expect(not plugin.reader_cancelled.is_connected(reader._on_reader_cancelled),
+		"Scene exit disconnects the optional cancellation callback.")
+	reader.free()
+	host.free()
+	await _settle()
 
 
 func _key(code: int) -> InputEventKey:

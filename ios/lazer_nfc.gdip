@@ -1,0 +1,23 @@
+[config]
+
+name="LazerNfc"
+binary="lazer_nfc.xcframework"
+
+initialization="godot_lazer_nfc_init"
+deinitialization="godot_lazer_nfc_deinit"
+
+[dependencies]
+
+linked=[]
+embedded=[]
+system=["CoreNFC.framework"]
+; UIRequiredDeviceCapabilities is an App Store install filter. Listing "nfc"
+; here would stop NFC-less iPhones from installing a game whose keyboard and
+; touch fallback works perfectly, exactly as android:required="false" avoids.
+capabilities=[]
+files=[]
+linker_flags=["-ObjC"]
+
+[plist]
+
+NFCReaderUsageDescription:string="LaZer NFC reads only the identifier of your own laboratory tags, so tapping one can answer a robot. It never reads or writes what is stored on a tag."
