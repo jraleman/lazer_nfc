@@ -14,10 +14,10 @@ Per-file Godot import profiles pin PCM16 instead of 4.7's default QOA; rebaking
 preserves generated import UIDs/remaps and enforces the authored sample layout.
 
 ``--voice-source DIR --voice-destination DIR`` only finishes WAVs produced by
-bake_voice.ps1: silence trimming, short edge fades and PCM normalization. Those
-voices are local Microsoft System.Speech synthesis, NOT human recordings or
-voices created by this mathematical instrument authoring code. Reproducing
-speech requires the same installed Windows voice/engine; no web service is used.
+bake_voice.ps1 or bake_voice.sh: silence trimming, short edge fades and PCM
+normalization. Those voices are offline System.Speech or eSpeak NG synthesis,
+NOT human recordings or this mathematical instrument authoring code. Reproducing
+speech requires the same installed voice/engine version; no web service is used.
 """
 
 from __future__ import annotations
@@ -429,7 +429,7 @@ def import_profile(path: Path, check: bool) -> None:
 def finish_voices(source: Path, destination: Path, check: bool) -> None:
     paths = sorted(source.glob("*.wav"))
     if not paths:
-        raise ValueError(f"No System.Speech WAVs in {source}")
+        raise ValueError(f"No offline speech WAVs in {source}")
     longest_round = 0.0
     for path in paths:
         with wave.open(str(path), "rb") as wav:
@@ -440,7 +440,7 @@ def finish_voices(source: Path, destination: Path, check: bool) -> None:
             samples.byteswap()
         peak = max(abs(value) for value in samples)
         if peak == 0:
-            raise ValueError(f"Silent System.Speech output: {path}")
+            raise ValueError(f"Silent offline speech output: {path}")
         audible = [i for i, value in enumerate(samples) if abs(value) >= peak * 0.008]
         first = max(audible[0] - round(RATE * 0.025), 0)
         last = min(audible[-1] + round(RATE * 0.035) + 1, len(samples))
@@ -449,7 +449,7 @@ def finish_voices(source: Path, destination: Path, check: bool) -> None:
             longest_round = max(longest_round, len(trimmed) / RATE)
         publish(destination / path.name, pcm_wave([trimmed], 0.56, 0.16, 0.004), check)
     verb = "Checked" if check else "Baked"
-    print(f"{verb} {len(paths)} offline System.Speech prompts; "
+    print(f"{verb} {len(paths)} offline speech prompts; "
           f"longest numbered round {longest_round:.3f} s.")
 
 

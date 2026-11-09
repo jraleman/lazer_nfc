@@ -961,7 +961,10 @@ as the audio call; the motor's own 10–30 ms start latency is close enough to
 audio that the two read as one event.
 
 Voice lines, numbers and all colour/binding prompts are rendered offline with
-local system speech by `tools/bake_voice.ps1`. There is no runtime TTS or
+local system speech by `tools/bake_voice.ps1`. Its Linux/macOS counterpart,
+`tools/bake_voice.sh`, authors the same text with offline eSpeak NG and the same
+PCM finishing, not a reproduction of the shipped Microsoft Zira voice.
+There is no runtime TTS or
 network service dependency, even in READY and binding. The first sequence
 note cancels unfinished announcements rather than allowing speech to mask a
 memory cue.

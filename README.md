@@ -180,6 +180,25 @@ pause and free with the scene and obey the shared Music/SFX sliders. The final
 motif and score announcement continue over results; replay or leaving cancels
 them rather than carrying old speech into another experiment.
 
+`tools/bake_voice.sh` is the Linux/macOS counterpart, using installed offline
+**eSpeak NG**, ffmpeg and Python 3.10+. It renders the same original prompt text
+and uses the same mono PCM16/44100 Hz trimming/normalization, but cannot
+reproduce Microsoft's Zira voice or WAV bytes. The shipped bank remains Zira;
+review a separate Unix bank before replacing it:
+
+```bash
+bash tools/bake_voice.sh --voice en-us --destination /tmp/lazer-voice-preview
+bash tools/bake_voice.sh --voice en-us --destination /tmp/lazer-voice-preview --check
+```
+
+`--check` requires matching voice/engine versions and never writes the bank.
+`--rate` and `--round-rate` retain the Windows -10..10 levels, mapped to
+`175 + 25 * rate` words/minute and clamped to eSpeak NG's 80..450 range;
+defaults are 3 and 6, with numbers two levels faster than core prompts.
+`--espeak-ng` and `--ffmpeg` accept executable paths; `PYTHON` chooses Python.
+Omitting `--destination` intentionally rebakes the game's voice bank.
+Neither baker adds runtime TTS, a network service or human recordings.
+
 The host tutorial recorder discovers `tools/tutorial_driver.gd`. Its shipped
 36-second clip plays a
 seeded keyboard experiment and demonstrates a mistake followed by a real
@@ -188,6 +207,9 @@ correction, rather than inventing a score. From `godot-base`:
 ```powershell
 .\tools\record_tutorials.ps1 -Games lazer_nfc -Godot (Get-Command godot).Source
 ```
+
+On Linux/macOS, use
+`bash tools/record_tutorials.sh --godot godot --games lazer_nfc`.
 
 ## Regressions
 
