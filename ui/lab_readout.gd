@@ -22,7 +22,7 @@ var _cell: StyleBoxFlat
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_panel = StyleBoxFlat.new()
-	_panel.bg_color = Color(0.045, 0.115, 0.15, 0.91)
+	_panel.bg_color = Color(0.045, 0.115, 0.15, 0.2)
 	_panel.border_color = Color(0.62, 0.83, 0.80, 0.24)
 	_panel.set_border_width_all(1)
 	_panel.set_corner_radius_all(14)

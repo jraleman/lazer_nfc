@@ -36,6 +36,7 @@ var _ui_scale := 1.0
 var _confirmation := "Space"
 var _dark_key := "Q"
 var _light_key := "E"
+var pads: VBoxContainer
 
 
 class ColorKey extends Button:
@@ -72,9 +73,9 @@ class ColorKey extends Button:
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_STOP
 	var panel := StyleBoxFlat.new()
-	panel.bg_color = INK
-	panel.border_color = Color("3a646c")
-	panel.set_border_width_all(2)
+	panel.bg_color = Color(INK, 0.18)
+	panel.border_color = Color("3a646c", 0.25)
+	panel.set_border_width_all(1)
 	panel.set_corner_radius_all(18)
 	panel.content_margin_left = 16
 	panel.content_margin_right = 16
@@ -100,11 +101,13 @@ func _ready() -> void:
 	_skip.pressed.connect(func() -> void: skip_requested.emit())
 	_fallback = _button("Use keys / touch", _actions)
 	_fallback.pressed.connect(func() -> void: fallback_requested.emit())
+	pads = VBoxContainer.new()
+	_layout.add_child(pads)
 	_pad = GridContainer.new()
 	_pad.columns = 7
 	_pad.add_theme_constant_override("h_separation", 8)
 	_pad.add_theme_constant_override("v_separation", 8)
-	_layout.add_child(_pad)
+	pads.add_child(_pad)
 	for hue: StringName in Palette.HUES:
 		var key := ColorKey.new()
 		key.hue = hue
@@ -114,7 +117,7 @@ func _ready() -> void:
 		# These have declared keyboard actions; Space must remain the run action.
 		key.focus_mode = Control.FOCUS_NONE
 		var normal := StyleBoxFlat.new()
-		normal.bg_color = Color("1a3948")
+		normal.bg_color = Color("1a3948", 0.3)
 		normal.border_color = Palette.color(hue).darkened(0.35)
 		normal.set_border_width_all(2)
 		normal.set_corner_radius_all(10)
@@ -132,7 +135,7 @@ func _ready() -> void:
 		_keys.append(key)
 	_shade_row = HBoxContainer.new()
 	_shade_row.add_theme_constant_override("separation", 8)
-	_layout.add_child(_shade_row)
+	pads.add_child(_shade_row)
 	for i in 3:
 		var button := _button(["Dark", "Base", "Light"][i], _shade_row)
 		button.toggle_mode = true
@@ -213,7 +216,7 @@ func preferred_height(width: float) -> float:
 	var height := 58.0
 	if _ready_mode or _binding:
 		height += 54.0
-	if _pad_visible and not _binding:
+	if _pad_visible and pads.visible and not _binding:
 		height += rows * (_key_height(width, columns) + 8.0)
 		if _shades:
 			height += 54.0

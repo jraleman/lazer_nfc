@@ -134,6 +134,7 @@ func _build_playfield() -> void:
 	_deck.skip_requested.connect(_skip_binding)
 	_deck.fallback_requested.connect(_use_fallback)
 	_deck.practice_toggled.connect(_on_practice_toggled)
+	register_hud_controls(_deck.pads, _queue_layout)
 	_sound = AudioDirector.new()
 	_sound.name = "LaboratoryAudio"
 	add_child(_sound)
@@ -1001,29 +1002,9 @@ func _resize_hud() -> void:
 	_hud_size = screen
 	_ui_factor = factor
 	var compact := screen.y > screen.x
-	var pause_parent := _player_one_card.get_parent()
-	if _pause_button.get_parent() != pause_parent:
-		_pause_button.reparent(pause_parent, false)
-	_player_one_card.custom_minimum_size.x = minf(190.0 * _ui_factor, screen.x * 0.3) \
-		if compact else 280.0 * _ui_factor
-	_pause_button.custom_minimum_size.x = (44.0 if compact else 104.0) * _ui_factor
-	_pause_button.text = "II" if compact else "Pause"
-	_pause_button.tooltip_text = "Pause"
+	_layout_shared_hud()
 	_hint.text = "Listen first. Recall after GO." if compact else \
 		"Watch the whole pattern. Recall after the double cue. Esc pauses."
-	for control: Control in [
-		_player_one_caption, _player_one_score, _player_one_streak,
-		_time_label, _time_caption, _mode_title, _callout, _hint, _pause_button,
-	]:
-		if not _hud_font_sizes.has(control):
-			_hud_font_sizes[control] = control.get_theme_font_size("font_size")
-		control.add_theme_font_size_override(
-			"font_size", roundi(float(_hud_font_sizes[control]) * _ui_factor)
-		)
-	if compact and screen.y < 1000.0:
-		_player_one_score.add_theme_font_size_override("font_size", roundi(40.0 * _ui_factor))
-		_time_label.add_theme_font_size_override("font_size", roundi(40.0 * _ui_factor))
-	_player_one_streak.custom_minimum_size.y = 24.0 * _ui_factor
 	if _deck != null:
 		_deck.set_ui_scale(_ui_factor)
 	_resize_results(screen, compact)
@@ -1134,7 +1115,7 @@ func _layout_lab() -> void:
 
 func _content_bounds() -> Rect2:
 	var screen := get_viewport_rect().size
-	var top := maxf(190.0 * _ui_factor, _callout.get_global_rect().end.y + 10.0 * _ui_factor)
+	var top := _shell_top_bar.get_global_rect().end.y + 12.0 * _ui_factor
 	var layout := _callout.get_parent() as BoxContainer
 	var margins := layout.get_parent() as MarginContainer
 	var hint_panel := _hint.get_parent() as Control
