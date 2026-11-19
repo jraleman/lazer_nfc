@@ -130,6 +130,7 @@ static func manifest() -> GameManifest:
 static func _theme() -> GameTheme:
 	var theme := GameTheme.new()
 	theme.logo_texture_path = "res://games/lazer_nfc/assets/visual/logo.svg"
+	theme.cover_texture_path = "res://games/lazer_nfc/assets/cover.png"
 	theme.logo_color = Color.WHITE
 	theme.plaque_color = Color.WHITE
 	theme.accent = Color("7ce6d2")
